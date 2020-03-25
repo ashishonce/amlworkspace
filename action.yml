@@ -2,10 +2,14 @@ name: "action to create or use an existing workspace for aml"
 description: "read previously added file in by the action"
 author: "ashishonce"
 inputs:
-  subscriptionId:
-    description: "your azure subscription id"
+  azureCredentials:
+    description: "azure credentials"
     required: true
-    default: ""
+  workspaceName:
+    description: " name of the workspace to use"
+    required: true
+  createWorkSpace:
+    description: "if workspace doesn't exist , this will create it"
 branding:
   icon: chevron-up
   color: 'green'

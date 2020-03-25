@@ -13,38 +13,24 @@ from utils import required_parameters_provided, AMLConfigurationException
 
 def main():
     # Loading input values
-    useCliAuth = False
-    cli_auth = None;
     print("::debug::Loading input values")
     # parameters_file = os.environ.get("INPUT_PARAMETERSFILE", default="workspace.json")
     azure_credentials = os.environ.get("INPUT_AZURECREDENTIALS", default='{}')
-    azure_subscription = os.environ.get("INPUT_SUBSCRIPTIONID", default="")
+    azureml_workSpaceName = os.environ.get("INPUT_WORKSPACENAME", default=None)
+
+    try:
+        azure_credentials = json.loads(azure_credentials)
+    except JSONDecodeError:
+        print("::error::Please paste output of `az ad sp create-for-rbac --name <your-sp-name> --role contributor --scopes /subscriptions/<your-subscriptionId>/resourceGroups/<your-rg> --sdk-auth` as value of secret variable: AZURE_CREDENTIALS. The JSON should include the following keys: 'tenantId', 'clientId', 'clientSecret' and 'subscriptionId'.")
+        raise AMLConfigurationException(f"Incorrect or poorly formed output from azure credentials saved in AZURE_CREDENTIALS secret. See setup in https://github.com/Azure/aml-workspace/blob/master/README.md")
     
-    if azure_credentials == '{}':
-        # test if user has done authentication in the Azure log in stage. can use CLI authentcation inside container  
-        cli_auth = AzureCliAuthentication()
-        if cli_auth != None:
-            useCliAuth = True;
-            print("successfully done cli authentication")
-        else:
-            print("could not get cli auth")
-    else:
-        try:
-            azure_credentials = json.loads(azure_credentials)
-        except JSONDecodeError:
-            print("::error::Please paste output of `az ad sp create-for-rbac --name <your-sp-name> --role contributor --scopes /subscriptions/<your-subscriptionId>/resourceGroups/<your-rg> --sdk-auth` as value of secret variable: AZURE_CREDENTIALS. The JSON should include the following keys: 'tenantId', 'clientId', 'clientSecret' and 'subscriptionId'.")
-            raise AMLConfigurationException(f"Incorrect or poorly formed output from azure credentials saved in AZURE_CREDENTIALS secret. See setup in https://github.com/Azure/aml-workspace/blob/master/README.md")
-        
-    if azure_subscription == "":
-        print(" subscription not present ")
-        return;
-    # # Checking provided parameters
-    # print("::debug::Checking provided parameters")
-    # required_parameters_provided(
-    #     parameters=azure_credentials,
-    #     keys=["tenantId", "clientId", "clientSecret", "subscriptionId"],
-    #     message="Required parameter(s) not found in your azure credentials saved in AZURE_CREDENTIALS secret for logging in to the workspace. Please provide a value for the following key(s): "
-    # )
+    # Checking provided parameters
+    print("::debug::Checking provided parameters")
+    required_parameters_provided(
+        parameters=azure_credentials,
+        keys=["tenantId", "clientId", "clientSecret", "subscriptionId"],
+        message="Required parameter(s) not found in your azure credentials saved in AZURE_CREDENTIALS secret for logging in to the workspace. Please provide a value for the following key(s): "
+    )
 
     # # Loading parameters file
     # print("::debug::Loading parameters file")
@@ -65,19 +51,22 @@ def main():
     #     keys=["name", "resource_group"],
     #     message="Required parameter(s) not found in your parameters file for loading a workspace. Please provide a value for the following key(s): "
     # )
+    
+    if (azureml_workSpaceName == None):
+        raise AMLConfigurationException("WorkSpace Name must be provided")
 
-    # # Loading Workspace
-    # sp_auth = ServicePrincipalAuthentication(
-    #     tenant_id=azure_credentials.get("tenantId", ""),
-    #     service_principal_id=azure_credentials.get("clientId", ""),
-    #     service_principal_password=azure_credentials.get("clientSecret", "")
-    # )
+    # Loading Workspace
+    sp_auth = ServicePrincipalAuthentication(
+        tenant_id=azure_credentials.get("tenantId", ""),
+        service_principal_id=azure_credentials.get("clientId", ""),
+        service_principal_password=azure_credentials.get("clientSecret", "")
+    )
     try:
         print("::debug::Loading existing Workspace")
         ws = Workspace.get(
             name="ashkumadevtestwkrspace",
-            subscription_id=azure_subscription,
-            auth=cli_auth
+            subscription_id=azure_credentials["subscriptionId"],
+            auth=sp_auth
         )
         print("::debug::Successfully loaded existing Workspace")
         print(ws)
