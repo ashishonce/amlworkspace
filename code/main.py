@@ -18,7 +18,7 @@ def main():
     print("::debug::Loading input values")
     # parameters_file = os.environ.get("INPUT_PARAMETERSFILE", default="workspace.json")
     azure_credentials = os.environ.get("INPUT_AZURECREDENTIALS", default='{}')
-    azure_subscription = os.environ.get("INPUT_SUBSCRIPTIONID", default="")
+    azure_subscription = os.environ.get("INPUT_SUBSCRIPTIONID", default="c00d16c7-6c1f-4c03-9be1-6934a4c49682")
     
     if azure_credentials == '{}':
         # test if user has done authentication in the Azure log in stage. can use CLI authentcation inside container  
