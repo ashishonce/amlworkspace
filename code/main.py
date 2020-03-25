@@ -14,9 +14,11 @@ from utils import required_parameters_provided, AMLConfigurationException
 def main():
     # Loading input values
     print("::debug::Loading input values")
-    # parameters_file = os.environ.get("INPUT_PARAMETERSFILE", default="workspace.json")
+    
+    parameters_file = os.environ.get("INPUT_PARAMETERSFILE", default="workspace.json")
     azure_credentials = os.environ.get("INPUT_AZURECREDENTIALS", default='{}')
     azureml_workSpaceName = os.environ.get("INPUT_WORKSPACENAME", default=None)
+    azureml_createWSIfNotExist = os.environ.get("INPUT_CREATEWORKSPACE", default=False)
 
     try:
         azure_credentials = json.loads(azure_credentials)
@@ -34,25 +36,29 @@ def main():
 
     # # Loading parameters file
     # print("::debug::Loading parameters file")
-    # prentDir = os.getcwd()
-    # parameters_file_path = os.path.join(prentDir + "/../" + ".ml", ".azure", parameters_file)
-    # print(os.path.abspath(parameters_file_path))
-    # try:
-    #     with open(parameters_file_path) as f:
-    #         parameters = json.load(f)
-    # except FileNotFoundError:
-    #     print(f"::error::Could not find parameter file in {parameters_file_path}. Please provide a parameter file in your repository (e.g. .ml/.azure/workspace.json).")
-    #     raise AMLConfigurationException(f"Could not find parameter file in {parameters_file_path}. Please provide a parameter file in your repository (e.g. .ml/.azure/workspace.json).")
+    print("::debug::Loading parameters file")
+    parameters_file_path = os.path.join(".ml", ".azure", parameters_file)
+    print(os.path.abspath(parameters_file_path))
+    try:
+        with open(parameters_file_path) as f:
+            parameters = json.load(f)
+    except FileNotFoundError:
+        print(" workspace file is not found, parameters will be empty")
+        parameters = {}
 
-    # # Checking provided parameters
-    # print("::debug::Checking provided parameters")
-    # required_parameters_provided(
-    #     parameters=parameters,
-    #     keys=["name", "resource_group"],
-    #     message="Required parameter(s) not found in your parameters file for loading a workspace. Please provide a value for the following key(s): "
-    # )
+    # Checking provided parameters if it's user provided config
+    if parameters != {}:
+        print("::debug::Checking provided parameters")
+        required_parameters_provided(
+            parameters=parameters,
+            keys=["name", "resource_group"],
+            message="Required parameter(s) not found in your parameters file for loading a workspace. Please provide a value for the following key(s): "
+        )
+        azureml_workSpaceName = parameters["name"];
+        # over rider , if in workflow it is false but configuration over rides it or other way round
+        azureml_createWSIfNotExist = azureml_createWSIfNotExist or parameters.get("create_workspace", False);
     
-    if (azureml_workSpaceName == None):
+    if (azureml_workSpaceName == None) or len(azureml_workSpaceName) == 0:
         raise AMLConfigurationException("WorkSpace Name must be provided")
 
     # Loading Workspace
@@ -64,8 +70,8 @@ def main():
     try:
         print("::debug::Loading existing Workspace")
         ws = Workspace.get(
-            name="ashkumadevtestwkrspace",
-            subscription_id=azure_credentials["subscriptionId"],
+            name=azureml_workSpaceName,
+            subscription_id=azure_credentials.get("subscriptionId", ""),
             auth=sp_auth
         )
         print("::debug::Successfully loaded existing Workspace")
@@ -84,34 +90,34 @@ def main():
         raise ProjectSystemException
     except WorkspaceException as exception:
         print(f"::debug::Loading existing Workspace failed: {exception}")
-        # if parameters.get("create_workspace", False):
-        #     try:
-        #         print("::debug::Creating new Workspace")
-        #         ws = Workspace.create(
-        #             name=parameters.get("name", None),
-        #             subscription_id=azure_credentials.get("subscriptionId", ""),
-        #             resource_group=parameters.get("resource_group", None),
-        #             location=parameters.get("location", None),
-        #             create_resource_group=parameters.get("create_resource_group", False),
-        #             sku=parameters.get("sku", "basic"),
-        #             friendly_name=parameters.get("friendly_name", None),
-        #             storage_account=parameters.get("storage_account", None),
-        #             key_vault=parameters.get("key_vault", None),
-        #             app_insights=parameters.get("app_insights", None),
-        #             container_registry=parameters.get("container_registry", None),
-        #             cmk_keyvault=parameters.get("cmk_key_vault", None),
-        #             resource_cmk_uri=parameters.get("resource_cmk_uri", None),
-        #             hbi_workspace=parameters.get("hbi_workspace", None),
-        #             auth=sp_auth,
-        #             exist_ok=True,
-        #             show_output=True
-        #         )
-        #     except WorkspaceException as exception:
-        #         print(f"::error::Creating new Workspace failed: {exception}")
-        #         raise AMLConfigurationException(f"Creating new Workspace failed with 'WorkspaceException': {exception}.")
-        # else:
-        #     print(f"::error::Loading existing Workspace failed with 'WorkspaceException' and new Workspace will not be created because parameter 'createWorkspace' was not defined or set to false in your parameter file: {exception}")
-        #     raise AMLConfigurationException("Loading existing Workspace failed with 'WorkspaceException' and new Workspace will not be created because parameter 'createWorkspace' was not defined or set to false in your parameter file.")
+        if azureml_createWSIfNotExist:
+            try:
+                print("::debug::Creating new Workspace")
+                ws = Workspace.create(
+                    name=azureml_workSpaceName,
+                    subscription_id=azure_credentials.get("subscriptionId", ""),
+                    resource_group=parameters.get("resource_group", azureml_workSpaceName+"_rsgrp"),
+                    location=parameters.get("location", None),
+                    create_resource_group=parameters.get("create_resource_group", True),
+                    sku=parameters.get("sku", "basic"),
+                    friendly_name=parameters.get("friendly_name", None),
+                    storage_account=parameters.get("storage_account", None),
+                    key_vault=parameters.get("key_vault", None),
+                    app_insights=parameters.get("app_insights", None),
+                    container_registry=parameters.get("container_registry", None),
+                    cmk_keyvault=parameters.get("cmk_key_vault", None),
+                    resource_cmk_uri=parameters.get("resource_cmk_uri", None),
+                    hbi_workspace=parameters.get("hbi_workspace", None),
+                    auth=sp_auth,
+                    exist_ok=True,
+                    show_output=True
+                )
+            except WorkspaceException as exception:
+                print(f"::error::Creating new Workspace failed: {exception}")
+                raise AMLConfigurationException(f"Creating new Workspace failed with 'WorkspaceException': {exception}.")
+        else:
+            print(f"::error::Loading existing Workspace failed with 'WorkspaceException' and new Workspace will not be created because parameter 'createWorkspace' was not defined or set to false in your parameter file: {exception}")
+            raise AMLConfigurationException("Loading existing Workspace failed with 'WorkspaceException' and new Workspace will not be created because parameter 'createWorkspace' was not defined or set to false in your parameter file.")
 
     # # Write Workspace ARM properties to config file
     # print("::debug::Writing Workspace ARM properties to config file")
