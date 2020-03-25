@@ -19,5 +19,5 @@ jobs:
         uses: ashishonce/amlworkspace@master
         with:
           azureCredentials: ${{ secrets.AZURE_CREDENTIALS }}
-          workspaceName: "ashkumadevtestwkrspace"
-          createWorkSpace : false
+          workspaceName: "ashkumadevtestwkrspace1"
+          createWorkSpace : true
