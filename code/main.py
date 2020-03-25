@@ -97,7 +97,7 @@ def main():
                     name=azureml_workSpaceName,
                     subscription_id=azure_credentials.get("subscriptionId", ""),
                     resource_group=parameters.get("resource_group", azureml_workSpaceName+"_rsgrp"),
-                    location=parameters.get("location", None),
+                    location=parameters.get("location", "southcentralUS"),
                     create_resource_group=parameters.get("create_resource_group", True),
                     sku=parameters.get("sku", "basic"),
                     friendly_name=parameters.get("friendly_name", None),
