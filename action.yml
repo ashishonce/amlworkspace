@@ -1,7 +1,10 @@
 name: "action to create or use an existing workspace for aml"
 description: "read previously added file in by the action"
 author: "ashishonce"
-# inputs:
+inputs:
+  subscriptionId:
+    description: "your azure subscription id"
+    required: true
   # azureCredentials:
   #   description: "Paste output of `az ad sp create-for-rbac --name <your-sp-name> --role contributor --scopes /subscriptions/<your-subscriptionId>/resourceGroups/<your-rg> --sdk-auth` as value of secret variable: AZURE_CREDENTIALS"
   #   required: true

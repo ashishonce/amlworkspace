@@ -16,5 +16,7 @@ jobs:
 
       - name: Self test
         id: selftest
-        uses: ashishonce/amlworkspace@master 
+        uses: ashishonce/amlworkspace@master
+        with:
+        subscriptionId:${{secrets.AZURE_SUBSCRIPTION}}
       

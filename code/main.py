@@ -18,11 +18,16 @@ def main():
     print("::debug::Loading input values")
     # parameters_file = os.environ.get("INPUT_PARAMETERSFILE", default="workspace.json")
     azure_credentials = os.environ.get("INPUT_AZURECREDENTIALS", default='{}')
+    azure_subscription = os.environ.get("INPUT_SUBSCRIPTIONID", default="")
+    if azure_subscription == "":
+        print(" subscription not present ")
+        return;
     if azure_credentials == '{}':
         # test if user has done authentication in the Azure log in stage. can use CLI authentcation inside container  
         cli_auth = AzureCliAuthentication()
-        useCliAuth = True;
-        print("successfully done cli authentication")
+        if cli_auth not None:
+            useCliAuth = True;
+            print("successfully done cli authentication")
     else:
         try:
             azure_credentials = json.loads(azure_credentials)
@@ -64,21 +69,15 @@ def main():
     #     service_principal_id=azure_credentials.get("clientId", ""),
     #     service_principal_password=azure_credentials.get("clientSecret", "")
     # )
-    # try:
-    #     print("::debug::Loading existing Workspace")
-    #     # ws = Workspace.get(
-    #     #     name=parameters.get("name", None),
-    #     #     subscription_id=azure_credentials.get("subscriptionId", ""),
-    #     #     resource_group=parameters.get("resource_group", None),
-    #     #     auth=sp_auth
-    #     # )
-    #     ws = Workspace.get(
-    #         name=parameters.get("name", None),
-    #         subscription_id=azure_credentials.get("subscriptionId", ""),
-    #         auth=sp_auth
-    #     )
-    #     print("::debug::Successfully loaded existing Workspace")
-    #     print(ws)
+    try:
+        print("::debug::Loading existing Workspace")
+        ws = Workspace.get(
+            name="ashkumadevtestwkrspace",
+            subscription_id=azure_subscription,
+            auth=cli_auth
+        )
+        print("::debug::Successfully loaded existing Workspace")
+        print(ws)
     # except AuthenticationException as exception:
     #     print(f"::error::Could not retrieve user token. Please paste output of `az ad sp create-for-rbac --name <your-sp-name> --role contributor --scopes /subscriptions/<your-subscriptionId>/resourceGroups/<your-rg> --sdk-auth` as value of secret variable: AZURE_CREDENTIALS: {exception}")
     #     raise AuthenticationException
