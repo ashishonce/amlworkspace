@@ -19,29 +19,32 @@ def main():
     # parameters_file = os.environ.get("INPUT_PARAMETERSFILE", default="workspace.json")
     azure_credentials = os.environ.get("INPUT_AZURECREDENTIALS", default='{}')
     azure_subscription = os.environ.get("INPUT_SUBSCRIPTIONID", default="")
-    if azure_subscription == "":
-        print(" subscription not present ")
-        return;
+    
     if azure_credentials == '{}':
         # test if user has done authentication in the Azure log in stage. can use CLI authentcation inside container  
         cli_auth = AzureCliAuthentication()
-        if cli_auth not None:
+        if cli_auth != None:
             useCliAuth = True;
             print("successfully done cli authentication")
+        else:
+            print("could not get cli auth")
     else:
         try:
             azure_credentials = json.loads(azure_credentials)
         except JSONDecodeError:
             print("::error::Please paste output of `az ad sp create-for-rbac --name <your-sp-name> --role contributor --scopes /subscriptions/<your-subscriptionId>/resourceGroups/<your-rg> --sdk-auth` as value of secret variable: AZURE_CREDENTIALS. The JSON should include the following keys: 'tenantId', 'clientId', 'clientSecret' and 'subscriptionId'.")
             raise AMLConfigurationException(f"Incorrect or poorly formed output from azure credentials saved in AZURE_CREDENTIALS secret. See setup in https://github.com/Azure/aml-workspace/blob/master/README.md")
-
-        # # Checking provided parameters
-        # print("::debug::Checking provided parameters")
-        # required_parameters_provided(
-        #     parameters=azure_credentials,
-        #     keys=["tenantId", "clientId", "clientSecret", "subscriptionId"],
-        #     message="Required parameter(s) not found in your azure credentials saved in AZURE_CREDENTIALS secret for logging in to the workspace. Please provide a value for the following key(s): "
-        # )
+        
+    if azure_subscription == "":
+        print(" subscription not present ")
+        return;
+    # # Checking provided parameters
+    # print("::debug::Checking provided parameters")
+    # required_parameters_provided(
+    #     parameters=azure_credentials,
+    #     keys=["tenantId", "clientId", "clientSecret", "subscriptionId"],
+    #     message="Required parameter(s) not found in your azure credentials saved in AZURE_CREDENTIALS secret for logging in to the workspace. Please provide a value for the following key(s): "
+    # )
 
     # # Loading parameters file
     # print("::debug::Loading parameters file")
@@ -78,6 +81,8 @@ def main():
         )
         print("::debug::Successfully loaded existing Workspace")
         print(ws)
+    except:
+        print(" some exception occured")
     # except AuthenticationException as exception:
     #     print(f"::error::Could not retrieve user token. Please paste output of `az ad sp create-for-rbac --name <your-sp-name> --role contributor --scopes /subscriptions/<your-subscriptionId>/resourceGroups/<your-rg> --sdk-auth` as value of secret variable: AZURE_CREDENTIALS: {exception}")
     #     raise AuthenticationException
