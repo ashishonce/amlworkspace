@@ -1,0 +1,17 @@
+name: "action to create or use an existing workspace for aml"
+description: "read previously added file in by the action"
+author: "ashishonce"
+# inputs:
+  # azureCredentials:
+  #   description: "Paste output of `az ad sp create-for-rbac --name <your-sp-name> --role contributor --scopes /subscriptions/<your-subscriptionId>/resourceGroups/<your-rg> --sdk-auth` as value of secret variable: AZURE_CREDENTIALS"
+  #   required: true
+#   parametersFile:
+#     description: "JSON file including the parameters of the workspace."
+#     required: false
+#     default: "workspace.json"
+branding:
+  icon: chevron-up
+  color: 'green'
+runs:
+  using: "docker"
+  image: "Dockerfile"
