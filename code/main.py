@@ -22,7 +22,7 @@ def main():
         # test if user has done authentication in the Azure log in stage. can use CLI authentcation inside container  
         cli_auth = AzureCliAuthentication()
         useCliAuth = True;
-        print("successfully done cli auth")
+        print("successfully done cli authentication")
     else:
         try:
             azure_credentials = json.loads(azure_credentials)
