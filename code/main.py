@@ -119,15 +119,15 @@ def main():
             print(f"::error::Loading existing Workspace failed with 'WorkspaceException' and new Workspace will not be created because parameter 'createWorkspace' was not defined or set to false in your parameter file: {exception}")
             raise AMLConfigurationException("Loading existing Workspace failed with 'WorkspaceException' and new Workspace will not be created because parameter 'createWorkspace' was not defined or set to false in your parameter file.")
 
-    # # Write Workspace ARM properties to config file
-    # print("::debug::Writing Workspace ARM properties to config file")
-    # config_file_path = os.environ.get("GITHUB_WORKSPACE", default=".ml")
-    # print(config_file_path)
-    # config_file_name = "aml_arm_config.json"
-    # ws.write_config(
-    #     file_name=config_file_name
-    # )
-    # print("::debug::Successfully finished Azure Machine Learning Workspace Action")
+    # Write Workspace ARM properties to config file
+    print("::debug::Writing Workspace ARM properties to config file")
+    config_file_path = os.environ.get("GITHUB_WORKSPACE", default=".ml")
+    print(config_file_path)
+    config_file_name = "aml_arm_config.json"
+    ws.write_config(
+        file_name=config_file_name
+    )
+    print("::debug::Successfully finished Azure Machine Learning Workspace Action")
 
 if __name__ == "__main__":
     main()
