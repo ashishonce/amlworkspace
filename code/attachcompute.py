@@ -39,7 +39,7 @@ def main():
         with open(parameters_file_path) as f:
             parameters = json.load(f)
     except FileNotFoundError:
-        print(f"::error::Could not find parameter file in {parameters_file_path}. Please provide a parameter file in your repository (e.g. .ml/.azure/workspace.json).")
+        print(f"::error::Could not find parameter file in {parameters_file_path}. Please provide a parameter file in your repository (e.g. .ml/.azure/compute.json).")
         parameters = {}
 
     # Loading Workspace
@@ -86,6 +86,8 @@ def main():
             azure_computeTarget = parameters["name"]
 
         print("Loading existing compute target")
+        print(ws)
+        
         compute_target = ComputeTarget(
             workspace=ws,
             name=azure_computeTarget
