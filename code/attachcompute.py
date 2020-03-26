@@ -73,7 +73,7 @@ def main():
     # Loading compute target
     try:
         # Checking provided parameters
-        print("::debug::Checking provided parameters")
+        print("Checking provided parameters")
         if parameters == {}:
             if azure_computeTarget == None:
                 print(" compute not available")
@@ -85,7 +85,7 @@ def main():
             )
             azure_computeTarget = parameters["name"]
 
-        print("::debug::Loading existing compute target")
+        print("Loading existing compute target")
         compute_target = ComputeTarget(
             workspace=ws,
             name=azure_computeTarget
