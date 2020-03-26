@@ -19,6 +19,6 @@ jobs:
         uses: ashishonce/amlworkspace@master
         with:
           azureCredentials: ${{ secrets.AZURE_CREDENTIALS }}
-          workspaceName: "ashkumadevtestwkrspace1"
+          workspaceName: "ashkumadevtestwkrspace"
           createWorkSpace : true
           computeTarget : "cpu-cluster"

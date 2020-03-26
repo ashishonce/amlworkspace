@@ -87,7 +87,7 @@ def main():
 
         print("Loading existing compute target")
         print(ws)
-        
+        print(azure_computeTarget)
         compute_target = ComputeTarget(
             workspace=ws,
             name=azure_computeTarget
