@@ -17,6 +17,7 @@ def main():
     print("::debug::Loading input values")
     parameters_file = os.environ.get("INPUT_PARAMETERS_FILE", default="compute.json")
     azure_credentials = os.environ.get("INPUT_AZURECREDENTIALS", default="{}")
+    azure_computeTarget = os.environ.get("INPUT_COMPUTETARGET", default=None)
     try:
         azure_credentials = json.loads(azure_credentials)
     except JSONDecodeError:
@@ -39,7 +40,7 @@ def main():
             parameters = json.load(f)
     except FileNotFoundError:
         print(f"::error::Could not find parameter file in {parameters_file_path}. Please provide a parameter file in your repository (e.g. .ml/.azure/workspace.json).")
-        raise AMLConfigurationException(f"Could not find parameter file in {parameters_file_path}. Please provide a parameter file in your repository (e.g. .ml/.azure/workspace.json).")
+        parameters = {}
 
     # Loading Workspace
     print("::debug::Loading AML Workspace")
@@ -73,16 +74,21 @@ def main():
     try:
         # Checking provided parameters
         print("::debug::Checking provided parameters")
-        required_parameters_provided(
-            parameters=parameters,
-            keys=["name"],
-            message="Required parameter(s) not found in your parameters file for loading a compute target. Please provide a value for the following key(s): "
-        )
+        if parameters == {}:
+            if azure_computeTarget == None:
+                print(" compute not available")
+        else:
+            required_parameters_provided(
+                parameters=parameters,
+                keys=["name"],
+                message="Required parameter(s) not found in your parameters file for loading a compute target. Please provide a value for the following key(s): "
+            )
+            azure_computeTarget = parameters["name"]
 
         print("::debug::Loading existing compute target")
         compute_target = ComputeTarget(
             workspace=ws,
-            name=parameters.get("name", None)
+            name=azure_computeTarget
         )
         print(f"::debug::Found compute target with same name. Not updating the compute target: {compute_target.serialize()}")
     except ComputeTargetException:

@@ -10,6 +10,8 @@ inputs:
     required: true
   createWorkSpace:
     description: "if workspace doesn't exist , this will create it"
+  computeTarget:
+    description: " name of compute cluster to use"
 branding:
   icon: chevron-up
   color: 'green'

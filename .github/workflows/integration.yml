@@ -21,3 +21,4 @@ jobs:
           azureCredentials: ${{ secrets.AZURE_CREDENTIALS }}
           workspaceName: "ashkumadevtestwkrspace1"
           createWorkSpace : true
+          computeTarget : "cpu-cluster"
