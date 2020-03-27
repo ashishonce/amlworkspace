@@ -17,7 +17,7 @@ class ComputeTargetManager(object):
     
     def executeAction(self, parameters_file =None, ws = None, azure_credentials = None , azure_computeTarget = None):
         try:
-        azure_credentials = json.loads(azure_credentials)
+            azure_credentials = json.loads(azure_credentials)
         except JSONDecodeError:
             print("::error::Please paste output of `az ad sp create-for-rbac --name <your-sp-name> --role contributor --scopes /subscriptions/<your-subscriptionId>/resourceGroups/<your-rg> --sdk-auth` as value of secret variable: AZURE_CREDENTIALS")
             raise AMLConfigurationException(f"Incorrect or poorly formed output from azure credentials saved in AZURE_CREDENTIALS secret. See setup in https://github.com/Azure/aml-compute/blob/master/README.md")
