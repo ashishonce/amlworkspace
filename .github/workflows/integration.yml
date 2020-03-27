@@ -22,3 +22,4 @@ jobs:
           workspaceName: "ashkumadevtestwkrspace"
           createWorkSpace : true
           computeTarget : "cpu-cluster"
+          experimentName : "train-on-amlcompute"

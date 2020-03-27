@@ -12,6 +12,10 @@ inputs:
     description: "if workspace doesn't exist , this will create it"
   computeTarget:
     description: " name of compute cluster to use"
+  experimentName:
+    description: "name of the experiment, it will be used to refer to an existing experiment or create a new one":
+      required: true
+
 branding:
   icon: chevron-up
   color: 'green'
