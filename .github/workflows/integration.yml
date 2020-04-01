@@ -1,5 +1,11 @@
 name: Integration Test
-on: [push]
+on:
+  push:
+    paths:
+      - 'train-on-amlcompute/**'
+      - 'code/**'
+      - '.github/workflows/integration.yml'
+      - 'action.yml'
 jobs:
   build:
     runs-on: ubuntu-latest

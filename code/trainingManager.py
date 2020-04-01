@@ -9,9 +9,7 @@ class TrainingManager(object):
         pass
 
     def executeAction(self,experiment, project_folder,training_Script,cpu_cluster):
-        # project_folder = './train-on-amlcompute'
-        # os.makedirs(project_folder, exist_ok=True)
-        # shutil.copy('train.py', project_folder) 
+        #TODO: take environment as input from user for reusing it, may be useful when resubmitting the experiment.
         myenv = Environment("myenv")
         myenv.docker.enabled = True
         myenv.python.conda_dependencies = CondaDependencies.create(conda_packages=['scikit-learn'])
@@ -22,5 +20,7 @@ class TrainingManager(object):
         # Set environment
         src.run_config.environment = myenv
         run = experiment.submit(config=src)
-        run.wait_for_completion(show_output=True);
-        run.get_metrics()
+
+        # uncomment the lines below if you want to wait for training to complete. We can make this as user input later.
+        # run.wait_for_completion(show_output=True);
+        # run.get_metrics()
