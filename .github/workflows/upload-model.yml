@@ -16,4 +16,4 @@ jobs:
             azureCredentials: ${{ secrets.AZURE_CREDENTIALS }}
             workspaceName: "ashkumadevtestwkrspace"
             experimentName: "train-on-amlcompute"
-            commit_SHA: ${{ github.event.client_payload.github.payload.repository.github_SHA }}
+            commit_SHA: ${{ github.event.client_payload.github_SHA }}
