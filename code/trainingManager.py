@@ -20,7 +20,7 @@ class TrainingManager(object):
         # Set environment
         src.run_config.environment = myenv
         tags = {"github_SHA":github_SHA}
-        run = experiment.submit(config=src,tags)
+        run = experiment.submit(config=src,tags=tags)
 
         # uncomment the lines below if you want to wait for training to complete. We can make this as user input later.
         # run.wait_for_completion(show_output=True);
