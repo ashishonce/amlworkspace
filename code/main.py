@@ -13,7 +13,7 @@ def main():
     azure_credentials = os.environ.get("INPUT_AZURECREDENTIALS", default='{}')
     azureml_workSpaceName = os.environ.get("INPUT_WORKSPACENAME", default=None)
     azureml_createWSIfNotExist = os.environ.get("INPUT_CREATEWORKSPACE", default=False)
-    github_SHA = os.environ.get("GITHUB_SHA", default=False)
+    github_SHA = os.environ.get("GITHUB_SHA", default="No-Tag")
     
     
     wsManager = WorkspaceManager(parameters_file, azure_credentials, azureml_workSpaceName, azureml_createWSIfNotExist)
