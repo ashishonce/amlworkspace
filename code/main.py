@@ -29,7 +29,7 @@ def main():
     experiment = ExperimentManager().executeAction(ws,experiment_name)
 
     if compute_Target != None and experiment != None:
-        TrainingManager().executeAction(experiment,"./train-on-amlcompute","train.py",compute_Target);
+        TrainingManager().executeAction(experiment,"./train-on-amlcompute","train.py",compute_Target, github_SHA);
     else:
         print(" compute target or experiment note found")
 
