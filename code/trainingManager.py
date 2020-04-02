@@ -8,7 +8,7 @@ class TrainingManager(object):
     def __init__(self):
         pass
 
-    def executeAction(self,experiment, project_folder,training_Script,cpu_cluster):
+    def executeAction(self,experiment, project_folder,training_Script,cpu_cluster,github_SHA):
         #TODO: take environment as input from user for reusing it, may be useful when resubmitting the experiment.
         myenv = Environment("myenv")
         myenv.docker.enabled = True
@@ -19,7 +19,8 @@ class TrainingManager(object):
 
         # Set environment
         src.run_config.environment = myenv
-        run = experiment.submit(config=src)
+        tags = {"github_SHA":github_SHA}
+        run = experiment.submit(config=src,tags)
 
         # uncomment the lines below if you want to wait for training to complete. We can make this as user input later.
         # run.wait_for_completion(show_output=True);

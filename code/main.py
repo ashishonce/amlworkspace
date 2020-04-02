@@ -1,18 +1,10 @@
 import os
 import json
-
-from azureml.core import Workspace
-from azureml.exceptions import WorkspaceException, AuthenticationException, ProjectSystemException
-from azureml.core.authentication import ServicePrincipalAuthentication
-from azureml.core.authentication import AzureCliAuthentication
-from adal.adal_error import AdalError
-from msrest.exceptions import AuthenticationError
-from json import JSONDecodeError
-from utils import required_parameters_provided, AMLConfigurationException
 from workspaceManager import WorkspaceManager;
 from computeManager import ComputeTargetManager;
 from experimentManager import ExperimentManager;
 from trainingManager import TrainingManager;
+
 def main():
     # Loading input values
     print("::debug::Loading input values")
@@ -21,6 +13,8 @@ def main():
     azure_credentials = os.environ.get("INPUT_AZURECREDENTIALS", default='{}')
     azureml_workSpaceName = os.environ.get("INPUT_WORKSPACENAME", default=None)
     azureml_createWSIfNotExist = os.environ.get("INPUT_CREATEWORKSPACE", default=False)
+    github_SHA = os.environ.get("GITHUB_SHA", default=False)
+    
     
     wsManager = WorkspaceManager(parameters_file, azure_credentials, azureml_workSpaceName, azureml_createWSIfNotExist)
     ws = wsManager.executeAction(parameters_file, azure_credentials, azureml_workSpaceName, azureml_createWSIfNotExist);
