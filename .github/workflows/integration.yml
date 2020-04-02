@@ -20,6 +20,6 @@ jobs:
         with:
           azureCredentials: ${{ secrets.AZURE_CREDENTIALS }}
           workspaceName: "ashkumadevtestwkrspace"
-          createWorkSpace : false
+          createWorkSpace : true
           computeTarget : "cpu-cluster"
           experimentName : "train-on-amlcompute"
